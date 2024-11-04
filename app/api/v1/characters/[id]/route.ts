@@ -1,15 +1,19 @@
 import { Character } from '@/app/types';
-import { type NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
+
+export interface RouteSegment {
+  params: { id: string };
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  segment: RouteSegment
 ): Promise<Response> {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(params.id);
+    const id = parseInt(segment.params.id);
     
     const character = characters.find(char => char.id === id);
     
