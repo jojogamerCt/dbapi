@@ -2,18 +2,14 @@ import { Character } from '@/app/types';
 import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-type Props = {
-  params: { id: string }
-}
-
 export async function GET(
   request: NextRequest,
-  props: Props
+  context: { params: { id: string } }
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(props.params.id);
+    const id = parseInt(context.params.id);
     
     const character = characters.find(char => char.id === id);
     
