@@ -2,15 +2,12 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-interface RouteParams {
-  params: {
-    filename: string;
-  };
-}
-
-export const GET = async (request: Request, { params }: RouteParams) => {
+export async function GET(
+  request: Request,
+  context: { params: { filename: string } }
+) {
   try {
-    const filename = params.filename;
+    const filename = context.params.filename;
     const imagePath = path.join(process.cwd(), 'public', 'images', filename);
 
     // Check if file exists
@@ -41,4 +38,4 @@ export const GET = async (request: Request, { params }: RouteParams) => {
       { status: 500 }
     );
   }
-}; 
+} 
