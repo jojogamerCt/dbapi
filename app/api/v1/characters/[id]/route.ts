@@ -1,14 +1,19 @@
 import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
 
+interface PageProps {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  pageProps: PageProps
 ) {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(params.id);
+    const id = parseInt(pageProps.params.id);
     
     const character = characters.find(char => char.id === id);
     
