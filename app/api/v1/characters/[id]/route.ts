@@ -2,22 +2,33 @@ import { Character } from '@/app/types';
 import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
 export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
+  _request: NextRequest,
+  { params }: Context
 ) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
     
     const character = characters.find(char => char.id === id);
     
     if (!character) {
-      return Response.json(
-        { status: 404, error: "Character not found" },
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({
+        status: 404,
+        error: "Character not found"
+      }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
     if (fields) {
@@ -46,21 +57,36 @@ export async function GET(
         }
       }
 
-      return Response.json({
+      return new Response(JSON.stringify({
         status: 200,
         data: filteredData
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
     }
 
-    return Response.json({
+    return new Response(JSON.stringify({
       status: 200,
       data: character
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
     console.error('Error processing request:', error);
-    return Response.json(
-      { status: 500, error: "Internal server error" },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({
+      status: 500,
+      error: "Internal server error"
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 } 
