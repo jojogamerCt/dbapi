@@ -70,7 +70,7 @@ DBAPI is a modern REST API that provides detailed information about Dragon Ball 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dbapi.git
+git clone https://github.com/jojogamerCt/dbapi.git
 
 # Install dependencies
 npm install
@@ -108,12 +108,12 @@ GET /api/v1/images/:filename
 
 ```javascript
 // Fetch a character
-fetch('https://dbapi.vercel.app/api/v1/characters/1')
+fetch('https://localhost:3000/api/v1/characters/1')
   .then(response => response.json())
   .then(data => console.log(data));
 
 // Get specific fields
-fetch('https://dbapi.vercel.app/api/v1/characters/1?fields=name,powerLevel.base')
+fetch('https://localhost:3000/api/v1/characters/1?fields=name,powerLevel.base')
   .then(response => response.json())
   .then(data => console.log(data));
 ```
