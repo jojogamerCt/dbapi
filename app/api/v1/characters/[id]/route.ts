@@ -1,10 +1,16 @@
 import { Character, ApiResponse } from '@/app/types';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { characters } from '@/app/data/characters';
 
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: RouteParams
 ) {
   const { searchParams } = new URL(request.url);
   const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
