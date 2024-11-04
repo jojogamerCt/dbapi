@@ -2,19 +2,13 @@ import { Character, ApiResponse } from '@/app/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: { id: string } }
 ) {
   const { searchParams } = new URL(request.url);
   const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-  const id = parseInt(params.id);
+  const id = parseInt(context.params.id);
   
   const character = characters.find(char => char.id === id);
   
@@ -28,8 +22,10 @@ export async function GET(
           if (!filteredData[parent as keyof Character]) {
             filteredData[parent as keyof Character] = {} as any;
           }
-          (filteredData[parent as keyof Character] as any)[child] = 
-            (character[parent as keyof Character] as any)[child];
+          const parentObj = character[parent as keyof Character] as any;
+          if (parentObj && child in parentObj) {
+            (filteredData[parent as keyof Character] as any)[child] = parentObj[child];
+          }
         } else {
           // Handle top-level fields
           if (field in character) {
