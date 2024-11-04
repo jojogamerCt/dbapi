@@ -1,12 +1,17 @@
 import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
 
+type Context = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }
+  _request: Request,
+  context: Context
 ) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
     const id = parseInt(context.params.id);
     
