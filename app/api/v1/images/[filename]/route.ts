@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-export const GET = async (
-  request: Request,
-  { params }
-) => {
+interface RouteParams {
+  params: {
+    filename: string;
+  };
+}
+
+export const GET = async (request: Request, { params }: RouteParams) => {
   try {
     const filename = params.filename;
     const imagePath = path.join(process.cwd(), 'public', 'images', filename);

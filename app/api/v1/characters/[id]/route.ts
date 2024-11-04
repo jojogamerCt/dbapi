@@ -2,7 +2,13 @@ import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
 import { NextResponse } from 'next/server';
 
-export const GET = async (request: Request, { params }) => {
+interface RouteParams {
+  params: {
+    id: string;
+  };
+}
+
+export const GET = async (request: Request, { params }: RouteParams) => {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
