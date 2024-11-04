@@ -1,21 +1,28 @@
-import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-export async function GET(
-  request: Request,
-  context: { params: { filename: string } }
+export default async function GET(
+  request: NextRequest,
+  params: Promise<{ params: { filename: string } }>
 ) {
   try {
-    const filename = context.params.filename;
+    // Await the params
+    const { params: resolvedParams } = await params;
+    const filename = resolvedParams.filename;
     const imagePath = path.join(process.cwd(), 'public', 'images', filename);
 
     // Check if file exists
     if (!fs.existsSync(imagePath)) {
-      return NextResponse.json(
-        { status: 404, error: "Image not found" },
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({
+        status: 404,
+        error: "Image not found"
+      }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
     // Get the host from the request
@@ -25,17 +32,27 @@ export async function GET(
     // Construct the full URL
     const imageUrl = `${protocol}://${host}/images/${filename}`;
 
-    return NextResponse.json({
+    return new Response(JSON.stringify({
       status: 200,
       data: {
         url: imageUrl
       }
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
     console.error('Error processing request:', error);
-    return NextResponse.json(
-      { status: 500, error: "Internal server error" },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({
+      status: 500,
+      error: "Internal server error"
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 } 

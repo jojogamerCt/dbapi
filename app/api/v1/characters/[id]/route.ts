@@ -2,12 +2,15 @@ import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
 import { NextRequest } from 'next/server';
 
-export async function GET(
+export default async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  params: Promise<{ params: { id: string } }>
 ) {
   try {
-    const id = parseInt(params.id);
+    // Await the params
+    const { params: resolvedParams } = await params;
+    const id = parseInt(resolvedParams.id);
+    
     const { searchParams } = request.nextUrl;
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
     
