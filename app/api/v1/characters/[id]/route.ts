@@ -1,11 +1,11 @@
 import { Character } from '@/app/types';
-import { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<Response> {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
@@ -21,6 +21,9 @@ export async function GET(
         status: 404,
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
       });
     }
@@ -58,6 +61,9 @@ export async function GET(
         status: 200,
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
       });
     }
@@ -69,6 +75,9 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
   } catch (error) {
@@ -80,6 +89,9 @@ export async function GET(
       status: 500,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
   }
