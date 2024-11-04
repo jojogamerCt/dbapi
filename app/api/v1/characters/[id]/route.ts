@@ -1,22 +1,17 @@
 import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
+import { NextResponse } from 'next/server';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export const GET = async (request: Request, { params }) => {
   try {
-    // Destructure id after awaiting params
-    const { id } = await params;
-    const characterId = parseInt(id);
-    
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
+    const id = parseInt(params.id);
     
-    const character = characters.find(char => char.id === characterId);
+    const character = characters.find(char => char.id === id);
     
     if (!character) {
-      return Response.json(
+      return NextResponse.json(
         { status: 404, error: "Character not found" },
         { status: 404 }
       );
@@ -48,21 +43,21 @@ export async function GET(
         }
       }
 
-      return Response.json({
+      return NextResponse.json({
         status: 200,
         data: filteredData
       });
     }
 
-    return Response.json({
+    return NextResponse.json({
       status: 200,
       data: character
     });
   } catch (error) {
     console.error('Error processing request:', error);
-    return Response.json(
+    return NextResponse.json(
       { status: 500, error: "Internal server error" },
       { status: 500 }
     );
   }
-}
+};
