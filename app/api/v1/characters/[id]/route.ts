@@ -9,9 +9,12 @@ export async function GET(
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(context.params.id);
     
-    const character = characters.find(char => char.id === id);
+    // Await params before using them
+    const { id } = await context.params;
+    const characterId = parseInt(id);
+    
+    const character = characters.find(char => char.id === characterId);
     
     if (!character) {
       return NextResponse.json(
