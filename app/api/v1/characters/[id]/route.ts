@@ -2,14 +2,13 @@ import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
 import { NextRequest } from 'next/server';
 
-export default async function GET(
+export const GET = async (
   request: NextRequest,
-  params: Promise<{ params: { id: string } }>
-) {
+  context: { params: { id: string } }
+) => {
   try {
-    // Await the params
-    const { params: resolvedParams } = await params;
-    const id = parseInt(resolvedParams.id);
+    // Get params
+    const id = parseInt(context.params.id);
     
     const { searchParams } = request.nextUrl;
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
@@ -86,4 +85,4 @@ export default async function GET(
       },
     });
   }
-}
+};
