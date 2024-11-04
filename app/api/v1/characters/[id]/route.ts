@@ -2,18 +2,16 @@ import { Character } from '@/app/types';
 import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-export interface RouteSegment {
-  params: { id: string };
-}
+type Params = { id: string };
 
 export async function GET(
   request: NextRequest,
-  segment: RouteSegment
+  { params }: { params: Params }
 ): Promise<Response> {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(segment.params.id);
+    const id = parseInt(params.id);
     
     const character = characters.find(char => char.id === id);
     
@@ -25,9 +23,6 @@ export async function GET(
         status: 404,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
         },
       });
     }
@@ -65,9 +60,6 @@ export async function GET(
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
         },
       });
     }
@@ -79,9 +71,6 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
   } catch (error) {
@@ -93,9 +82,6 @@ export async function GET(
       status: 500,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
   }
