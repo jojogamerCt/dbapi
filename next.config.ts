@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'export',
   images: {
-    domains: ['localhost', 'dbapi.netlify.app'],
+    unoptimized: true,
+    domains: ['localhost', 'jojogamerct.github.io'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -10,6 +12,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  basePath: '/dbapi',
 };
 
 export default nextConfig;
