@@ -1,21 +1,30 @@
 import { Character } from '@/app/types';
 import { characters } from '@/app/data/characters';
+import { type NextRequest } from 'next/server';
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ): Promise<Response> {
   try {
-    const { searchParams } = new URL(request.url);
-    const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
+    // Attendiamo i parametri prima di usarli
+    const params = await context.params;
     const id = parseInt(params.id);
+    
+    const searchParams = request.nextUrl.searchParams;
+    const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
     
     const character = characters.find(char => char.id === id);
     
     if (!character) {
-      return Response.json(
-        { status: 404, error: "Character not found" },
-        { status: 404 }
+      return new Response(
+        JSON.stringify({ status: 404, error: "Character not found" }), 
+        { 
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       );
     }
 
@@ -45,21 +54,40 @@ export async function GET(
         }
       }
 
-      return Response.json({
-        status: 200,
-        data: filteredData
-      });
+      return new Response(
+        JSON.stringify({
+          status: 200,
+          data: filteredData
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
     }
 
-    return Response.json({
-      status: 200,
-      data: character
-    });
+    return new Response(
+      JSON.stringify({
+        status: 200,
+        data: character
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error processing request:', error);
-    return Response.json(
-      { status: 500, error: "Internal server error" },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ status: 500, error: "Internal server error" }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
-} 
+}

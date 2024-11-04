@@ -147,13 +147,22 @@ function LiveDemo() {
       setLoading(true);
       setUrl(newUrl);
       
-      // Costruisci l'URL completo se necessario
-      const fullUrl = newUrl.startsWith('http') ? newUrl : `${window.location.origin}${newUrl}`;
+      // Usa l'URL completo per le richieste API
+      const fullUrl = newUrl.startsWith('http') 
+        ? newUrl 
+        : `${window.location.origin}${newUrl}`;
       
-      const res = await fetch(fullUrl);
+      const res = await fetch(fullUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
+
       const data = await res.json();
       setResponse(data);
     } catch (error) {
