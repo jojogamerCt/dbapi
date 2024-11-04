@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['localhost', 'dbapi.vercel.app'],
+    domains: ['localhost', 'dbapi.netlify.app'],
     remotePatterns: [
       {
         protocol: 'https',
