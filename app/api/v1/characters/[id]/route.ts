@@ -1,53 +1,72 @@
 import { Character, ApiResponse } from '@/app/types';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
+interface Params {
+  id: string;
+}
+
+type CharacterKey = keyof Character;
+type NestedObject = { [key: string]: any };
+
 export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Params }
 ) {
-  const { searchParams } = new URL(request.url);
-  const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-  const id = parseInt(context.params.id);
-  
-  const character = characters.find(char => char.id === id);
-  
-  if (character) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
+    const id = parseInt(params.id);
+    
+    const character = characters.find(char => char.id === id);
+    
+    if (!character) {
+      return Response.json(
+        { status: 404, error: "Character not found" },
+        { status: 404 }
+      );
+    }
+
     if (fields) {
-      const filteredData: Partial<Character> = {};
-      fields.forEach(field => {
+      const filteredData = {} as Record<CharacterKey, any>;
+      
+      for (const field of fields) {
         if (field.includes('.')) {
-          // Handle nested fields (e.g., powerLevel.base)
-          const [parent, child] = field.split('.');
-          if (!filteredData[parent as keyof Character]) {
-            filteredData[parent as keyof Character] = {} as any;
+          const [parent, child] = field.split('.') as [CharacterKey, string];
+          
+          if (!(parent in character)) continue;
+          
+          if (!(parent in filteredData)) {
+            filteredData[parent] = {} as NestedObject;
           }
-          const parentObj = character[parent as keyof Character] as any;
-          if (parentObj && child in parentObj) {
-            (filteredData[parent as keyof Character] as any)[child] = parentObj[child];
+          
+          const parentObj = character[parent] as NestedObject;
+          if (child in parentObj) {
+            filteredData[parent][child] = parentObj[child];
           }
         } else {
-          // Handle top-level fields
-          if (field in character) {
-            filteredData[field as keyof Character] = character[field as keyof Character];
+          const key = field as CharacterKey;
+          if (key in character) {
+            filteredData[key] = character[key];
           }
         }
-      });
+      }
 
-      return NextResponse.json({
+      return Response.json({
         status: 200,
         data: filteredData
       });
     }
 
-    return NextResponse.json({
+    return Response.json({
       status: 200,
       data: character
     });
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return Response.json(
+      { status: 500, error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(
-    { status: 404, error: "Character not found" },
-    { status: 404 }
-  );
 } 
