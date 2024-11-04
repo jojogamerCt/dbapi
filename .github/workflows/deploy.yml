@@ -5,33 +5,37 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_API_URL: /api/v1
+          NEXT_PUBLIC_API_URL: /dbapi/api/v1
 
-      - name: Export static files
-        run: npm run export
+      - name: Configure Pages
+        uses: actions/configure-pages@v3
 
-      - name: Add .nojekyll file
-        run: touch ./out/.nojekyll
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./out
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+        id: deployment
+        uses: actions/deploy-pages@v2
         with:
-          branch: gh-pages
-          folder: out 
+          token: ${{ secrets.GITHUB_TOKEN }}

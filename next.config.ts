@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     ],
   },
   basePath: '/dbapi',
+  assetPrefix: '/dbapi/',
 };
 
 export default nextConfig;
