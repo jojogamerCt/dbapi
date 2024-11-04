@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #f97316; /* Orange for Dragon Ball theme */
 }
 
 @media (prefers-color-scheme: dark) {
