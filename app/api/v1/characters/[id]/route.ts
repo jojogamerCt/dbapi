@@ -1,22 +1,19 @@
-import { Character, ApiResponse } from '@/app/types';
+import { Character } from '@/app/types';
 import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-interface Params {
-  id: string;
+type Props = {
+  params: { id: string }
 }
 
-type CharacterKey = keyof Character;
-type NestedObject = { [key: string]: any };
-
 export async function GET(
-  req: NextRequest,
-  { params }: { params: Params }
+  request: NextRequest,
+  props: Props
 ) {
   try {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
-    const id = parseInt(params.id);
+    const id = parseInt(props.params.id);
     
     const character = characters.find(char => char.id === id);
     
@@ -28,24 +25,25 @@ export async function GET(
     }
 
     if (fields) {
-      const filteredData = {} as Record<CharacterKey, any>;
+      const filteredData = {} as Record<keyof Character, any>;
       
       for (const field of fields) {
         if (field.includes('.')) {
-          const [parent, child] = field.split('.') as [CharacterKey, string];
+          const [parent, child] = field.split('.');
+          const parentKey = parent as keyof Character;
           
-          if (!(parent in character)) continue;
+          if (!(parentKey in character)) continue;
           
-          if (!(parent in filteredData)) {
-            filteredData[parent] = {} as NestedObject;
+          if (!(parentKey in filteredData)) {
+            filteredData[parentKey] = {};
           }
           
-          const parentObj = character[parent] as NestedObject;
+          const parentObj = character[parentKey] as Record<string, any>;
           if (child in parentObj) {
-            filteredData[parent][child] = parentObj[child];
+            filteredData[parentKey][child] = parentObj[child];
           }
         } else {
-          const key = field as CharacterKey;
+          const key = field as keyof Character;
           if (key in character) {
             filteredData[key] = character[key];
           }

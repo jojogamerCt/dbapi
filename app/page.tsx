@@ -143,17 +143,21 @@ function LiveDemo() {
   const [loading, setLoading] = useState(false);
 
   const handleUrlClick = async (newUrl: string) => {
-    setUrl(newUrl);
-    setLoading(true);
     try {
-      const res = await fetch(newUrl);
+      setLoading(true);
+      setUrl(newUrl);
+      
+      // Costruisci l'URL completo se necessario
+      const fullUrl = newUrl.startsWith('http') ? newUrl : `${window.location.origin}${newUrl}`;
+      
+      const res = await fetch(fullUrl);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
       setResponse(data);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching data:', error);
       setResponse({ 
         status: 500, 
         error: 'Failed to fetch data. Please try again.' 
@@ -310,7 +314,7 @@ function LiveDemo() {
               >
                 {baseUrl}/characters/7?fields=techniques,transformations
               </button>
-              <span className="text-gray-600 dark:text-gray-400 ml-2">- Get Super Saiyan techniques and transformations</span>
+              <span className="text-gray-600 dark:text-gray-400 ml-2">- Get Kaio-ken x10 techniques and transformations</span>
             </li>
 
             {/* Images */}
