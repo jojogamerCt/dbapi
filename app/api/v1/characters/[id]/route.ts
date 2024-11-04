@@ -1,13 +1,10 @@
 import { Character } from '@/app/types';
-import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-type Params = { id: string };
-
 export async function GET(
-  request: NextRequest,
-  { params }: { params: Params }
-): Promise<Response> {
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
