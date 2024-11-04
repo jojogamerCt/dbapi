@@ -2,18 +2,12 @@ import { Character } from '@/app/types';
 import { NextRequest } from 'next/server';
 import { characters } from '@/app/data/characters';
 
-type Context = {
-  params: {
-    id: string;
-  };
-};
-
 export async function GET(
-  _request: NextRequest,
-  { params }: Context
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { searchParams } = new URL(_request.url);
+    const { searchParams } = new URL(request.url);
     const fields = searchParams.get('fields')?.split(',').map(field => decodeURIComponent(field));
     const id = parseInt(params.id);
     
